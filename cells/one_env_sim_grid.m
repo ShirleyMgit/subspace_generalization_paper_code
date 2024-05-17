@@ -13,14 +13,14 @@ x = linspace(0, 9.9, 100) ;
 y = x ; 
 [X,Y] = meshgrid(x,y) ; 
 
-r0 = -1*pi/4;
+r0 = pi/3;
 shiftx_0_1 = 0;
 shifty_0_1 = 0;
 
 shift_xy = zeros(2, 1);
 
-r_xy = r0 + 1*pi/4;%
-dx = 0.01;
+r_xy = -r0 + 3*pi/4;%the cosine starts with pi/4 shifts and the reciprocal lattice is pi/2 from the original lattice 
+dx = 0.02;
 max_x = 2/sqrt(3);%because of the gridscale/ actual grid scale ratio (reciprocal lattice)
 max_y = max_x*sqrt(3) / 2;
 dy = dx* sqrt(3) / 2;
