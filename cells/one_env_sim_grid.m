@@ -5,22 +5,24 @@ clc
 global gridscale thresh  
 
 thresh = 0.25;
-gridscale = 2;
+gridscale = 4; % env1 - gridscale = 4, env2: grid scale - 2, 
+% modules: r0 - pi/2 or pi/4, p/3; shift_x = 0, 0.1 
 % the actual grid scale is: gridscale*2/sqrt(3) - this is the reciprocal
 % lattice
 
-x = linspace(0, 9.9, 100) ;
+n_res = 50;
+x = linspace(0, 9.9, n_res) ;
 y = x ; 
 [X,Y] = meshgrid(x,y) ; 
 
-r0 = pi/3;
-shiftx_0_1 = 0;
+r0 = pi/4;
+shiftx_0_1 = 0.0;% 0, 0.1
 shifty_0_1 = 0;
 
 shift_xy = zeros(2, 1);
 
 r_xy = -r0 + 3*pi/4;%the cosine starts with pi/4 shifts and the reciprocal lattice is pi/2 from the original lattice 
-dx = 0.02;
+dx = 0.01;
 max_x = 2/sqrt(3);%because of the gridscale/ actual grid scale ratio (reciprocal lattice)
 max_y = max_x*sqrt(3) / 2;
 dy = dx* sqrt(3) / 2;
@@ -35,8 +37,8 @@ for y = 2:celly
     shift_vecX(y,:) = shift_vecX(y,:) + dx*(y-1)/2;
 end
 
-figure(1000)
-plot(shift_vecX(:),shift_vecY(:), 'o')
+% figure(1000)
+% plot(shift_vecX(:),shift_vecY(:), 'o')
 
 R = [cos(r_xy) -sin(r_xy); sin(r_xy) cos(r_xy)];
 XYshift = [shift_vecX(:) shift_vecY(:)];     
@@ -47,7 +49,7 @@ plot(rotXYshift(:, 1), rotXYshift(:, 2), 'o')
 
 n_cells = cellx * celly;
 
-grid_cells_env1 = zeros(n_cells, 100, 100);
+grid_cells_env1 = zeros(n_cells, n_res, n_res);
 
 n = 1;
 for s1 = 1:n_cells
@@ -80,7 +82,7 @@ imagesc(mean_all1)
 title('mean env 1')
 colorbar
 
-c11 = corrcoef(reshape(grid_cells_env1, n_cells, 10000)');
+c11 = corrcoef(reshape(grid_cells_env1, n_cells, n_res*n_res)');
 figure(10)
 imagesc(c11)
 colorbar
@@ -102,6 +104,9 @@ subplot(2,2,4)
 imagesc(X(:), Y(:), squeeze(grid_cells_env1(1,:,:)) + squeeze(grid_cells_env1(120,:,:)))
 colorbar
 title('1 + 120')
+
+grid_cells_env2save = reshape(grid_cells_env1, n_cells, n_res * n_res);
+save(['simulated_grid_cells_env_1_module_s', num2str(gridscale),'.mat'], 'grid_cells_env2save');
 
 
 function Zr = rotate(theta, X, Y)

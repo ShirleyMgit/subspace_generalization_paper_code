@@ -21,8 +21,8 @@ parfor (n = 1:num_permutation, 3)
     sum_var21 = sum(proj21)/trace(S2);
     sum_var12 = sum(proj12)/trace(S1);
     sum_var = 0.5 * (sum_var21 + sum_var12);
-    cumsum_var = cumsum(sum_var,2)/num_cells;
+    cumsum_var = cumsum(sum_var,2);
 
-    proj_auc(n) = sum(cumsum_var);
+    proj_auc(n) = sum(cumsum_var)/num_cells;
 
 end
