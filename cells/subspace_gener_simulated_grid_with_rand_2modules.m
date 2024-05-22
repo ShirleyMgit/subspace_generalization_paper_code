@@ -1,5 +1,5 @@
 clear all
-%close all
+close all
 clc
 
 
@@ -15,8 +15,8 @@ more_code = fullfile(exp_root, 'cells_data_muller');
 addpath(genpath(more_code));
 
 % load the simulated data:
-
-gridscale = 2; %modules: gridscale = 2, 4
+% modules: gridscale = 2, 4
+gridscale = 2; 
 file_name1 = ['simulated_grid_cells_env_1_module_s', num2str(gridscale),'.mat'];
 file_name2 = ['simulated_grid_cells_env_2_module_s', num2str(gridscale),'.mat'];
 load(file_name1)
@@ -26,7 +26,7 @@ env1_data_module1 = grid_cells_env2save;
 load(file_name2)
 env2_data_module1 = grid_cells_env2save;
 
-gridscale = 4; %modules: gridscale = 2, 4
+gridscale = 4; 
 file_name1 = ['simulated_grid_cells_env_1_module_s', num2str(gridscale),'.mat'];
 file_name2 = ['simulated_grid_cells_env_2_module_s', num2str(gridscale),'.mat'];
 load(file_name1)
@@ -37,7 +37,7 @@ env2_data_module2 = grid_cells_env2save;
 grid_dim = sqrt(num_grids);
 
 %%% calculate pseudo voxels %%%
-a_noise = 0.05;
+a_noise = 0.0;
 
 v_max = sqrt(num_grids);
 dv = 1;
@@ -57,7 +57,7 @@ n_voxels = 2* n_voxels1;
 shift_vecXv = shift_vecX(:);
 shift_vecYv = shift_vecY(:);
 
-r_random = 1.0; % 1 if only random segregated voxels
+r_random = 1; % 1 if only random segregated voxels
 r_voxel = ceil(num_grids*r_random / n_voxels1);
 max_ind_random = r_voxel * n_voxels1;
 index_all = 1:num_grids;
@@ -120,6 +120,20 @@ imagesc(reshape(squeeze(env1_voxels_m2(4, :)), sqrt(nres), sqrt(nres)))
 colorbar
 
 figure(3)
+subplot(2, 2, 1)
+imagesc(reshape(squeeze(env1_voxels_m1(1, :)), sqrt(nres), sqrt(nres)))
+colorbar
+subplot(2, 2, 2)
+imagesc(reshape(squeeze(env1_voxels_m1(3, :)), sqrt(nres), sqrt(nres)))
+colorbar
+subplot(2, 2, 3)
+imagesc(reshape(squeeze(env1_voxels_m2(1, :)), sqrt(nres), sqrt(nres)))
+colorbar
+subplot(2, 2, 4)
+imagesc(reshape(squeeze(env1_voxels_m2(3, :)), sqrt(nres), sqrt(nres)))
+colorbar
+
+figure(4)
 subplot(2,1,1)
 imagesc(reshape(mean(env1_voxels_m1), sqrt(nres), sqrt(nres)))
 colorbar
@@ -127,14 +141,14 @@ subplot(2,1,2)
 imagesc(reshape(mean(env1_voxels_m2), sqrt(nres), sqrt(nres)))
 colorbar
 
-figure(4)
+figure(5)
 plot(pc_fraction_grid, [0, cumsum_var_grid_same], 'k', 'LineWidth', 2)
 hold on
 plot(pc_fraction_grid, [0, cumsum_var_grid_dif], 'g:', 'LineWidth', 2)
 hold on
 plot(0:0.1:1, 0:0.1:1, ':k')
 
-num_permutation = 500;
+num_permutation = 10000;
 proj_auc_grid = cal_proj_auc_random_dist_2sides(transpose(env1_voxels_m), transpose(env2_voxels_m), num_permutation);
 
 % calculate stats:
