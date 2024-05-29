@@ -4,7 +4,7 @@ clc
 
 % Calculates subspace generalization between simulated voxels.
 % Each voxel is an average over simulated grid cells. Fraction of cells are selected
-% according to their phase suh that grid cells with closer phases are averaged within the same voxels
+% according to their phase such that grid cells with closer phases are averaged within the same voxels
 % and fraction that is selected randomly.
 % noise is added to the voxels' activity map
 

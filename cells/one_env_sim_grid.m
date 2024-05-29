@@ -4,8 +4,18 @@ clc
 % simulate 10 x 10 box
 global gridscale thresh  
 
+saving_folder = 'C:\Users\User\Documents\fMRI_EXP\cells_data_muller\wetransfer_neil-s-data_2023-09-25_1057';
 thresh = 0.25;
-gridscale = 4; % env1 - gridscale = 4, env2: grid scale - 2, 
+gridscale_all = [4, 3, 2, 5];
+phase_env12 = [pi/2, pi/3, 0, pi/4; pi/4, pi/5, pi/3, pi/6];
+shift_x_env12 = [0, 0.1, 0, 0.2; 0.1, 0, 0.1, 0];
+
+env = 2;
+module = 2;
+
+gridscale = gridscale_all(module); % in the reciprocal lattic
+
+% env1 - gridscale = 4, env2: grid scale - 2, 
 % modules: r0 - pi/2 or pi/4, p/3; shift_x = 0, 0.1 
 % the actual grid scale is: gridscale*2/sqrt(3) - this is the reciprocal
 % lattice
@@ -15,15 +25,15 @@ x = linspace(0, 9.9, n_res) ;
 y = x ; 
 [X,Y] = meshgrid(x,y) ; 
 
-r0 = pi/4;
-shiftx_0_1 = 0.0;% 0, 0.1
+r0 = phase_env12(env, module);
+shiftx_0_1 = shift_x_env12(env, module);
 shifty_0_1 = 0;
 
 shift_xy = zeros(2, 1);
 
-r_xy = -r0 + 3*pi/4;%the cosine starts with pi/4 shifts and the reciprocal lattice is pi/2 from the original lattice 
+r_xy = -r0 + 3*pi/4; % the cosine starts with pi/4 shifts and the reciprocal lattice is pi/2 from the original lattice (the cosine defines the reciprocal lattic, while the grid maps are the lattic) 
 dx = 0.01;
-max_x = 2/sqrt(3);%because of the gridscale/ actual grid scale ratio (reciprocal lattice)
+max_x = 2/sqrt(3); % because of the gridscale/ actual grid scale ratio (reciprocal lattice)
 max_y = max_x*sqrt(3) / 2;
 dy = dx* sqrt(3) / 2;
 shift_vec_x1 = linspace(0, max_x -dx , ceil(max_x/dx)) ;
@@ -44,8 +54,8 @@ R = [cos(r_xy) -sin(r_xy); sin(r_xy) cos(r_xy)];
 XYshift = [shift_vecX(:) shift_vecY(:)];     
 rotXYshift = XYshift*R'; 
 
-figure(1001)
-plot(rotXYshift(:, 1), rotXYshift(:, 2), 'o')
+% figure(1001)
+% plot(rotXYshift(:, 1), rotXYshift(:, 2), 'o')
 
 n_cells = cellx * celly;
 
@@ -106,7 +116,7 @@ colorbar
 title('1 + 120')
 
 grid_cells_env2save = reshape(grid_cells_env1, n_cells, n_res * n_res);
-save(['simulated_grid_cells_env_1_module_s', num2str(gridscale),'.mat'], 'grid_cells_env2save');
+save(fullfile(saving_folder, ['simulated_grid_cells_env_', num2str(env),'_module_s', num2str(gridscale),'.mat']), 'grid_cells_env2save');
 
 
 function Zr = rotate(theta, X, Y)
