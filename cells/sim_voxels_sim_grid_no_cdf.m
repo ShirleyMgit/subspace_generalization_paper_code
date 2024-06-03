@@ -45,7 +45,7 @@ dv = 1;
 shift_vec_1 = linspace(0, v_max-dv , v_max) ;
 [shift_vecX,shift_vecY] = meshgrid(shift_vec_1 ,shift_vec_1 );
 
-div_voxels = 2;
+div_voxels = 5;%2;
 cell_in_voxels1D = grid_dim / div_voxels;
 
 n_voxels1 = ceil(div_voxels * div_voxels);
@@ -55,7 +55,7 @@ cells_in_voxels = num_grids/ n_voxels1;
 
 n_voxels = 2* n_voxels1;
 
-v_r_random = 0:0.1:1;%[0, 1];
+v_r_random = [1];%0:0.1:1;%[0, 1];
 auc_within = zeros(2, length(v_r_random),1);
 auc_between = zeros(2, length(v_r_random),1);
 grid_effect = zeros(2, length(v_r_random),1);
@@ -63,7 +63,7 @@ index_all = 1:num_grids;
 
 is_plot_auc = false;
 
-for isnoise = 1:2
+for isnoise = 1:1
     a_noise = v_noise(isnoise);
     for n=1:length(v_r_random)
 
@@ -73,7 +73,9 @@ for isnoise = 1:2
         r_random = v_r_random(n); % 1 if only random segregated voxels
         r_voxel = ceil(num_grids*r_random / n_voxels1);
         max_ind_random = r_voxel * n_voxels1;
-
+        if max_ind_random > num_grids
+            max_ind_random = num_grids;
+        end
         index_random = randperm(num_grids);
         index_random_v = index_random(1:max_ind_random );
         index_phase = index_all;
@@ -196,6 +198,7 @@ env2_voxels_m = zeros(n_voxels, nres);
 env1_data_phase = env1_data(index_phase, :);
 env2_data_phase = env2_data(index_phase, :);
 
+num_grids = length(env1_data(:, 1));
 nv = 1;
 for n1 = 1:sqrt(n_voxels)
     for n2 = 1:sqrt(n_voxels)
@@ -203,11 +206,16 @@ for n1 = 1:sqrt(n_voxels)
         ind2averageL = (shift_vecXv < n1*dv_voxels) .* (shift_vecYv(:) < n2*dv_voxels);
         ind2averageS = (shift_vecXv(:) >= (n1-1)*dv_voxels) .* (shift_vecYv(:) >= (n2-1)*dv_voxels);
         ind2average = (ind2averageS .* ind2averageL);
-
-        grid2average = mean([env1_data_phase(ind2average>0,  :); env1_data(index_random_v(1+(nv-1)*r_voxel:r_voxel*nv), :)]);
-        env1_voxels_m(n1 + (n2-1)*sqrt(n_voxels), :) = grid2average + a_noise*randn(size(grid2average));
-        grid2average = mean([env2_data_phase(ind2average>0,  :); env2_data(index_random_v(1+(nv-1)*r_voxel:r_voxel*nv), :)]);
-        env2_voxels_m(n1 + (n2-1)*sqrt(n_voxels), :) = grid2average + a_noise*randn(size(grid2average));
+        
+        if r_voxel*nv > num_grids
+            grid2average1 = mean([env1_data_phase(ind2average>0,  :); env1_data(index_random_v(1+(nv-1)*r_voxel:end), :)]);
+            grid2average2 = mean([env2_data_phase(ind2average>0,  :); env2_data(index_random_v(1+(nv-1)*r_voxel:end), :)]);
+        else
+            grid2average1 = mean([env1_data_phase(ind2average>0,  :); env1_data(index_random_v(1+(nv-1)*r_voxel:r_voxel*nv), :)]);
+            grid2average2 = mean([env2_data_phase(ind2average>0,  :); env2_data(index_random_v(1+(nv-1)*r_voxel:r_voxel*nv), :)]);
+        end
+        env1_voxels_m(n1 + (n2-1)*sqrt(n_voxels), :) = grid2average1 + a_noise*randn(size(grid2average1));
+        env2_voxels_m(n1 + (n2-1)*sqrt(n_voxels), :) = grid2average2 + a_noise*randn(size(grid2average2));
         nv = nv + 1;
 
     end

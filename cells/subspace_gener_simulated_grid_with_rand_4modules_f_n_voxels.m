@@ -54,7 +54,7 @@ v_voxels = 2:4:36;
 
 index_all = 1:num_grids;
 
-n_rep = 10;
+n_rep = 20;
 
 p_val_effect = zeros(length(v_voxels), n_rep);
 mean_auc = zeros(length(v_voxels), n_rep);

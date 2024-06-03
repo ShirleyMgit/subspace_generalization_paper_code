@@ -104,7 +104,7 @@ for isnoise = 1:length(v_noise)
 
             shift_vecXv = shift_vecXv(index_phase);
             shift_vecYv = shift_vecYv(index_phase);
-            [env1_voxels_m1, env2_voxels_m1] = cal_voxels(a_noise, index_random_v, index_phase, squeeze(module_env(module, 1, :, :)), squeeze(module_env(module, 2, :, :)), shift_vecXv, shift_vecYv, n_voxels1, nres);
+            [env1_voxels_m1, env2_voxels_m1, snr] = cal_voxels(a_noise, index_random_v, index_phase, squeeze(module_env(module, 1, :, :)), squeeze(module_env(module, 2, :, :)), shift_vecXv, shift_vecYv, n_voxels1, nres);
 
             env1_voxels_m = [env1_voxels_m; env1_voxels_m1];
             env2_voxels_m = [env2_voxels_m; env2_voxels_m1];
@@ -255,7 +255,7 @@ for n = 1:n_modules
     colorbar
 end
 
-function [env1_voxels_m, env2_voxels_m] = cal_voxels(a_noise, index_random_v, index_phase, env1_data, env2_data, shift_vecXv, shift_vecYv, n_voxels, nres)
+function [env1_voxels_m, env2_voxels_m, snr] = cal_voxels(a_noise, index_random_v, index_phase, env1_data, env2_data, shift_vecXv, shift_vecYv, n_voxels, nres)
 global dv_voxels r_voxel flag_2D_split median_m_shift is_by_median
 
 env1_voxels_m = zeros(n_voxels, nres);
@@ -308,8 +308,8 @@ else
             disp(["env1: voxels according to phase: ", num2str(sum(sum(ind2average)))])
             warning(append("env1: number of cells: ", num2str(length(selected_grids_env1(:, 1)))))
         end
-        grid2average = mean(selected_grids_env1);
-        env1_voxels_m(n1, :) = grid2average + a_noise*randn(size(grid2average));
+        grid2average1 = mean(selected_grids_env1);
+        env1_voxels_m(n1, :) = grid2average1 + a_noise*randn(size(grid2average1));
 
         selected_grids_env2 = [env2_data_phase(ind2average>0,  :); env2_data(index_random_v(1+(n1-1)*r_voxel:r_voxel*n1), :)];
         if length(selected_grids_env2(:, 1)) < 6000 | length(selected_grids_env1(:, 1))>7000
@@ -317,9 +317,14 @@ else
             warning(append("env 2: number of cells: ", num2str(length(selected_grids_env2(:, 1)))))
         end
        
-        grid2average = mean(selected_grids_env2);
-        env2_voxels_m(n1, :) = grid2average + a_noise*randn(size(grid2average));
+        grid2average2 = mean(selected_grids_env2);
+        env2_voxels_m(n1, :) = grid2average2 + a_noise*randn(size(grid2average2));
 
+        if a_noise > 0
+            snr = std([grid2average1(:); grid2average2(:)])/a_noise;
+        else
+            snr = 1;
+        end
     end
 end
 end
