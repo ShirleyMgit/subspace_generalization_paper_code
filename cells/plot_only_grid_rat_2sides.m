@@ -25,8 +25,8 @@ for n=1:num_grid_rats
     cumsum_var_grid22 = cal_projection_plot(transpose(env2_data), transpose(env2_data));
     cumsum_var_grid21 = cal_projection_plot(transpose(env1_data), transpose(env1_data));
 
-    cumsum_var_grid_same = 0.5 * (cumsum_var_grid11 + cumsum_var_grid22)/ num_grids;
-    cumsum_var_grid_dif = 0.5 * (cumsum_var_grid12 + cumsum_var_grid21)/ num_grids;
+    cumsum_var_grid_same = 0.5 * (cumsum_var_grid11 + cumsum_var_grid22);
+    cumsum_var_grid_dif = 0.5 * (cumsum_var_grid12 + cumsum_var_grid21);
 
     num_grid_cells = length(cumsum_var_grid_same);
     pc_fraction_grid = linspace(0,1,length(cumsum_var_grid_same)+1);
