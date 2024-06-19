@@ -20,7 +20,7 @@ shift_x_env12 = [0, 0.1, 0, 0.2; 0.1, 0, 0.1, 0];
 
 addpath(genpath(more_code));
 
-flag_2D_split = true; % split grids into voxels both by X and Y (if false split only by X)
+flag_2D_split = false; % split grids into voxels both by X and Y (if false split only by X)
 n_modules = 4;
 n_voxels1 = 4; % number of voxels per module
 is_by_median = false;
@@ -66,10 +66,10 @@ cells_in_voxels = num_grids/ n_voxels1;
 
 n_voxels = length(gridscale_all)* n_voxels1;
 
-v_r_random = 0:0.1:1; % [0, 1]; % 
+v_r_random = 0:0.25:1;%0:0.1:1; % [0, 1]; % 
 index_all = 1:num_grids;
 
-n_rep = 10;
+n_rep = 5;%10;
 
 p_val_effect = zeros(2, length(v_r_random), n_rep);
 mean_auc = zeros(2, length(v_r_random), n_rep);
@@ -303,7 +303,7 @@ else
         ind2average = (ind2averageS .* ind2averageL);
 
         selected_grids_env1 = [env1_data_phase(ind2average>0,  :); env1_data(index_random_v(1+(n1-1)*r_voxel:r_voxel*n1), :)];
-        if length(selected_grids_env1(:, 1)) < 6000 | length(selected_grids_env1(:, 1))>7000
+        if length(selected_grids_env1(:, 1)) < 0.9*grids_in_voxel | length(selected_grids_env1(:, 1))>1.1*grids_in_voxel
             disp(["env1: number of cells within voxel should be approximatly: ", num2str(grids_in_voxel)])
             disp(["env1: voxels according to phase: ", num2str(sum(sum(ind2average)))])
             warning(append("env1: number of cells: ", num2str(length(selected_grids_env1(:, 1)))))
@@ -312,7 +312,7 @@ else
         env1_voxels_m(n1, :) = grid2average1 + a_noise*randn(size(grid2average1));
 
         selected_grids_env2 = [env2_data_phase(ind2average>0,  :); env2_data(index_random_v(1+(n1-1)*r_voxel:r_voxel*n1), :)];
-        if length(selected_grids_env2(:, 1)) < 6000 | length(selected_grids_env1(:, 1))>7000
+        if length(selected_grids_env2(:, 1)) < 0.9*grids_in_voxel | length(selected_grids_env1(:, 1))>1.1*grids_in_voxel
             disp(["env2: voxels according to phase: ", num2str(sum(sum(ind2average)))])
             warning(append("env 2: number of cells: ", num2str(length(selected_grids_env2(:, 1)))))
         end

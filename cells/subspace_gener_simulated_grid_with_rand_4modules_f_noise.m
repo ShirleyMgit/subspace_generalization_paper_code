@@ -10,6 +10,10 @@ clc
 
 global dv_voxels r_voxel flag_2D_split median_m_shift is_by_median
 
+n_rep = 1; % 40; % number of repetitions
+is_plot_auc = true; % false; % plot the AUC within the reptition loop
+num_permutation = 100;%10000; % number of permutation to calculate the NULL distribution
+
 exp_root = 'C:\Users\User\Documents\fMRI_EXP\';
 more_code = fullfile(exp_root, 'cells_data_muller');
 
@@ -44,7 +48,7 @@ end
 grid_dim = sqrt(num_grids);
 
 %%% calculate pseudo voxels %%%
-v_noise = 0:0.02:0.1; % noise amplitude 
+v_noise = [0, 0.1];%0:0.02:0.1; % noise amplitude 
 
 v_max = sqrt(num_grids);
 dv = 1;
@@ -66,18 +70,14 @@ cells_in_voxels = num_grids/ n_voxels1;
 
 n_voxels = length(gridscale_all)* n_voxels1;
 
-v_r_random = [0, 1]; % ratio of random split
+v_r_random = [1, 0]; % ratio of random split
 index_all = 1:num_grids;
-
-n_rep = 40;
 
 p_val_effect = zeros(length(v_noise), length(v_r_random), n_rep);
 mean_auc = zeros(length(v_noise), length(v_r_random), n_rep);
 auc_within = zeros(length(v_noise), length(v_r_random), n_rep);
 auc_between = zeros(length(v_noise), length(v_r_random), n_rep);
 grid_effect = zeros(length(v_noise), length(v_r_random), n_rep);
-
-is_plot_auc = false;
 
 for rep = 1: n_rep % repeat calcualtions for stats
 
@@ -133,7 +133,6 @@ for rep = 1: n_rep % repeat calcualtions for stats
             grid_effect1 = (sum(cumsum_var_grid_same) - sum(cumsum_var_grid_dif))/n_voxels;
             grid_effect(isnoise, n, rep) = grid_effect1;
 
-            num_permutation = 10000;
             proj_auc_grid = cal_proj_auc_random_dist_2sides(transpose(env1_voxels_m), transpose(env2_voxels_m), num_permutation);
 
             % calculate stats:
@@ -160,14 +159,14 @@ for rep = 1: n_rep % repeat calcualtions for stats
                 if a_noise==0
                     plot(pc_fraction_grid, [0, cumsum_var_grid_same], 'k', 'LineWidth', 2)
                     hold on
-                    plot(pc_fraction_grid, [0, cumsum_var_grid_dif], 'g', 'LineWidth', 2)
+                    plot(pc_fraction_grid, [0, cumsum_var_grid_dif], 'k:', 'LineWidth', 2)
                     hold on
                     plot(0:0.1:1, 0:0.1:1, ':k')
                     title(['fraction random = ', num2str(r_random)])
                 else
-                    plot(pc_fraction_grid, [0, cumsum_var_grid_same], '-.k', 'LineWidth', 2)
+                    plot(pc_fraction_grid, [0, cumsum_var_grid_same], 'b', 'LineWidth', 2)
                     hold on
-                    plot(pc_fraction_grid, [0, cumsum_var_grid_dif], '-.g', 'LineWidth', 2)
+                    plot(pc_fraction_grid, [0, cumsum_var_grid_dif], 'b:', 'LineWidth', 2)
                     hold on
                     plot(0:0.1:1, 0:0.1:1, ':k')
                 end

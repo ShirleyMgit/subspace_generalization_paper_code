@@ -4,6 +4,7 @@ clc
 % simulate 10 x 10 box
 global gridscale thresh  
 
+is_save = false;
 saving_folder = 'C:\Users\User\Documents\fMRI_EXP\cells_data_muller\wetransfer_neil-s-data_2023-09-25_1057';
 thresh = 0.25;
 gridscale_all = [4, 3, 2, 5];
@@ -11,7 +12,7 @@ phase_env12 = [pi/2, pi/3, 0, pi/4; pi/4, pi/5, pi/3, pi/6];
 shift_x_env12 = [0, 0.1, 0, 0.2; 0.1, 0, 0.1, 0];
 
 env = 2;
-module = 2;
+module = 4;
 
 gridscale = gridscale_all(module); % in the reciprocal lattic
 
@@ -32,7 +33,7 @@ shifty_0_1 = 0;
 shift_xy = zeros(2, 1);
 
 r_xy = -r0 + 3*pi/4; % the cosine starts with pi/4 shifts and the reciprocal lattice is pi/2 from the original lattice (the cosine defines the reciprocal lattic, while the grid maps are the lattic) 
-dx = 0.01;
+dx = 0.1;%0.01;
 max_x = 2/sqrt(3); % because of the gridscale/ actual grid scale ratio (reciprocal lattice)
 max_y = max_x*sqrt(3) / 2;
 dy = dx* sqrt(3) / 2;
@@ -97,6 +98,11 @@ figure(10)
 imagesc(c11)
 colorbar
 
+grid_cells_env1r = reshape(grid_cells_env1, n_cells, n_res*n_res)';
+[coeff,score,latent] = pca(grid_cells_env1r);
+figure(20)
+plot(latent,'*')
+
 figure(10000)
 subplot(2,2,1)
 imagesc(X(:), Y(:), squeeze(grid_cells_env1(1,:,:)))
@@ -116,8 +122,9 @@ colorbar
 title('1 + 120')
 
 grid_cells_env2save = reshape(grid_cells_env1, n_cells, n_res * n_res);
-save(fullfile(saving_folder, ['simulated_grid_cells_env_', num2str(env),'_module_s', num2str(gridscale),'.mat']), 'grid_cells_env2save');
-
+if is_save
+    save(fullfile(saving_folder, ['simulated_grid_cells_env_', num2str(env),'_module_s', num2str(gridscale),'.mat']), 'grid_cells_env2save');
+end
 
 function Zr = rotate(theta, X, Y)
 global gridscale 
