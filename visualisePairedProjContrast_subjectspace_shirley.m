@@ -4,8 +4,23 @@ clc
 
 exp_root = 'C:\Users\User\Documents\fMRI_EXP\';
 root = 'C:\Users\User\Documents\fMRI_EXP\Alon\';
-%dataDir = fullfile(root,"beh","training");
-masks_path = fullfile(root,'subspaceGener','fsl_normalization','groupStats','masks','masks_in_sub_numbers');%
+
+% where to get the data from - only one should be true
+peakFlag = false;
+avgEffectT2_EC_Mask = true;
+OFC_T = false;
+visual_effect = false;
+%avgEffect0p01Mask = false;
+%avgEffect0p05Mask = true;
+alon_mask = false;
+alon_peak = false;
+EHR_julich = false;
+
+if avgEffectT2_EC_Mask
+    masks_path = fullfile(root,'subspaceGener','fsl_normalization','groupStats','masks');
+else
+    masks_path = fullfile(root,'subspaceGener','fsl_normalization','groupStats','masks','masks_in_sub_numbers');
+end
 spm_path =  "C:\Users\User\Documents\spm12";
 addpath(spm_path);
 
@@ -15,17 +30,6 @@ for iSub = 1:length(subjects)
 end
 
 plotSwarmChartFlag = false; 
-
-% where to get the data from - only one should be true
-peakFlag = false;%true;
-avgEffectT2_EC_Mask = false;
-OFC_T = false;
-visual_effect = true;%false;
-%avgEffect0p01Mask = false;
-%avgEffect0p05Mask = true;
-alon_mask = false;
-alon_peak = false;%true;
-EHR_julich = false;
 
 if peakFlag
     if alon_peak
